@@ -19,7 +19,7 @@
             padding: 20px;
             border-radius: 10px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            position: relative;  /* 讓按鈕可以放在圖片下方 */
+            position: relative;  
         }
         .game-info {
             margin-bottom: 20px;
@@ -27,7 +27,7 @@
             text-align: left;
         }
         input[type="number"] {
-            width: 80%;  /* 縮短輸入框 */
+            width: 80%;  
             padding: 10px;
             font-size: 16px;
             margin-bottom: 20px;
@@ -62,7 +62,7 @@
             margin-top: 20px;
         }
         
-        /* 按鈕位於圖片下方的樣式 */
+        
         .buttons-container .confirm-btn-bottom {
             position: absolute;
             bottom: 10px;
@@ -74,7 +74,7 @@
             border-radius: 30px;
         }
 
-        /* 讓圖片和按鈕顯示在遊戲區塊內 */
+    
         .image-container {
             position: relative;
         }
@@ -97,10 +97,10 @@
     </div>
 
     <script>
-        const secretNumber = Math.floor(Math.random() * 99) + 2;  // 隨機生成密碼，範圍為 2~99
+        const secretNumber = Math.floor(Math.random() * 99) + 2;  
         let remainingAttempts = 7;
-        let lowerBound = 2;  // 初始範圍下限，不能是 1
-        let upperBound = 99;  // 初始範圍上限，不能是 100
+        let lowerBound = 2;  
+        let upperBound = 99;  
         let guess = null;
 
         const gameInfo = document.getElementById("gameInfo");
@@ -115,7 +115,7 @@
             remainingAttemptsText.innerText = remainingAttempts;
         }
 
-        // 顯示遊戲結果（答對或答錯）
+       
         function showGameResult(message, imagePath) {
             gameInfo.innerHTML = `<p>${message}</p>`;
             if (imagePath) {
@@ -124,22 +124,21 @@
                 imageContainer.appendChild(img);
             }
 
-            // 隱藏「取消」按鈕，顯示「確定」按鈕並放在圖片下方
-            cancelBtn.style.display = "none";  // 隱藏取消按鈕
-            confirmBtn.classList.add("confirm-btn-bottom");  // 加上樣式
-            confirmBtn.textContent = "確定";  // 確定按鈕文字
+            
+            cancelBtn.style.display = "none";  
+            confirmBtn.classList.add("confirm-btn-bottom");  
+            confirmBtn.textContent = "確定";  
         }
 
-        // 顯示錯誤消息
+        
         function showError(message) {
             gameInfo.innerHTML = `<p>${message}</p>`;
-            // 隱藏「取消」按鈕，顯示「確定」按鈕並放在圖片下方
-            cancelBtn.style.display = "none";  // 隱藏取消按鈕
-            confirmBtn.classList.add("confirm-btn-bottom");  // 加上樣式
-            confirmBtn.textContent = "確定";  // 確定按鈕文字
+            
+            cancelBtn.style.display = "none";  
+            confirmBtn.classList.add("confirm-btn-bottom");  
+            confirmBtn.textContent = "確定";  
         }
 
-        // 顯示更新後的範圍
         function showUpdatedRange() {
             gameInfo.innerHTML = `
                 <p>請輸入 ${lowerBound} 到 ${upperBound} 之間的數字</p>
@@ -147,41 +146,41 @@
             `;
         }
 
-        // 確定按鈕點擊處理
+        
         confirmBtn.addEventListener("click", function() {
             guess = parseInt(guessInput.value);
 
-            // 檢查輸入是否有效
+            
             if (isNaN(guess) || guess <= lowerBound || guess >= upperBound) {
                 showError("請輸入有效範圍內的數字！（不能選擇範圍的上下限）");
                 return;
             }
 
-            remainingAttempts--;  // 每猜一次減少一次機會
-            updateAttempts();  // 更新剩餘次數
+            remainingAttempts--;  
+            updateAttempts();  
 
             if (guess === secretNumber) {
-                showGameResult("恭喜你答對了！", "correct.jpg");  // 顯示答對圖片
+                showGameResult("恭喜你答對了！", "correct.jpg");  
             } else {
                 if (guess < secretNumber) {
-                    lowerBound = guess;  // 猜小了，更新範圍下限
+                    lowerBound = guess;  
                 } else {
-                    upperBound = guess;  // 猜大了，更新範圍上限
+                    upperBound = guess;  
                 }
 
-                // 顯示更新後的範圍
+                
                 showUpdatedRange();
 
-                // 若剩餘次數為 0，顯示遊戲結束
+                
                 if (remainingAttempts === 0) {
                     showGameResult("遊戲結束！正確答案是 " + secretNumber, "wrong.jpg");
                 }
             }
         });
 
-        // 取消按鈕點擊處理
+        
         cancelBtn.addEventListener("click", function() {
-            guessInput.value = "";  // 清空輸入框
+            guessInput.value = ""; 
         });
     </script>
 
