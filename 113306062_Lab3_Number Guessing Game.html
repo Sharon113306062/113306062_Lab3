@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>113306062_Lab3_Number Guessing Game</title>
+	<style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            padding-top: 50px;
+            padding-left: 20px;
+            padding-right: 20px;
+        }
+        .game-container {
+            width: 300px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            position: relative;  /* 讓按鈕可以放在圖片下方 */
+        }
+        .game-info {
+            margin-bottom: 20px;
+            font-size: 18px;
+            text-align: left;
+        }
+        input[type="number"] {
+            width: 80%;  /* 縮短輸入框 */
+            padding: 10px;
+            font-size: 16px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 30px;
+            
+        }
+        .buttons-container {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+        .buttons-container button {
+            padding: 15px;
+            font-size: 13px;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+        }
+        .confirm-btn {
+            background-color: #007bff;
+            color: white;
+        }
+        .cancel-btn {
+            background-color: white;
+            color: #007bff;
+            border: 2px solid #007bff;
+        }
+        .image-container img {
+            max-width: 100%;
+            max-height: 200px;
+            margin-top: 20px;
+        }
+        
+        /* 按鈕位於圖片下方的樣式 */
+        .buttons-container .confirm-btn-bottom {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            background-color: #007bff;
+            color: white;
+            padding: 15px 30px;
+            font-size: 18px;
+            border-radius: 30px;
+        }
+
+        /* 讓圖片和按鈕顯示在遊戲區塊內 */
+        .image-container {
+            position: relative;
+        }
+    </style>
+</head>
+<body>
+	<h1 id="gameTitle">113306062_Lab3_Number Guessing Game</h1>
+
+    <div class="game-container">
+        <div class="game-info" id="gameInfo">
+            <p>請輸入 1 到 100 之間的數字</p>
+            <p>還剩下 <span id="remainingAttempts">7</span> 次機會</p>
+        </div>
+        <input type="number" id="guessInput" placeholder="輸入數字" min="2" max="99">
+        <div class="buttons-container">
+            <button class="confirm-btn" id="confirmBtn">確定</button>
+            <button class="cancel-btn" id="cancelBtn">取消</button>
+        </div>
+        <div class="image-container" id="imageContainer"></div>
+    </div>
+
+    <script>
+        const secretNumber = Math.floor(Math.random() * 99) + 2;  // 隨機生成密碼，範圍為 2~99
+        let remainingAttempts = 7;
+        let lowerBound = 2;  // 初始範圍下限，不能是 1
+        let upperBound = 99;  // 初始範圍上限，不能是 100
+        let guess = null;
+
+        const gameInfo = document.getElementById("gameInfo");
+        const remainingAttemptsText = document.getElementById("remainingAttempts");
+        const guessInput = document.getElementById("guessInput");
+        const confirmBtn = document.getElementById("confirmBtn");
+        const cancelBtn = document.getElementById("cancelBtn");
+        const imageContainer = document.getElementById("imageContainer");
+
+        
+        function updateAttempts() {
+            remainingAttemptsText.innerText = remainingAttempts;
+        }
+
+        // 顯示遊戲結果（答對或答錯）
+        function showGameResult(message, imagePath) {
+            gameInfo.innerHTML = `<p>${message}</p>`;
+            if (imagePath) {
+                const img = document.createElement("img");
+                img.src = imagePath;
+                imageContainer.appendChild(img);
+            }
+
+            // 隱藏「取消」按鈕，顯示「確定」按鈕並放在圖片下方
+            cancelBtn.style.display = "none";  // 隱藏取消按鈕
+            confirmBtn.classList.add("confirm-btn-bottom");  // 加上樣式
+            confirmBtn.textContent = "確定";  // 確定按鈕文字
+        }
+
+        // 顯示錯誤消息
+        function showError(message) {
+            gameInfo.innerHTML = `<p>${message}</p>`;
+            // 隱藏「取消」按鈕，顯示「確定」按鈕並放在圖片下方
+            cancelBtn.style.display = "none";  // 隱藏取消按鈕
+            confirmBtn.classList.add("confirm-btn-bottom");  // 加上樣式
+            confirmBtn.textContent = "確定";  // 確定按鈕文字
+        }
+
+        // 顯示更新後的範圍
+        function showUpdatedRange() {
+            gameInfo.innerHTML = `
+                <p>請輸入 ${lowerBound} 到 ${upperBound} 之間的數字</p>
+                <p>還剩下 <span id="remainingAttempts">${remainingAttempts}</span> 次機會</p>
+            `;
+        }
+
+        // 確定按鈕點擊處理
+        confirmBtn.addEventListener("click", function() {
+            guess = parseInt(guessInput.value);
+
+            // 檢查輸入是否有效
+            if (isNaN(guess) || guess <= lowerBound || guess >= upperBound) {
+                showError("請輸入有效範圍內的數字！（不能選擇範圍的上下限）");
+                return;
+            }
+
+            remainingAttempts--;  // 每猜一次減少一次機會
+            updateAttempts();  // 更新剩餘次數
+
+            if (guess === secretNumber) {
+                showGameResult("恭喜你答對了！", "correct.jpg");  // 顯示答對圖片
+            } else {
+                if (guess < secretNumber) {
+                    lowerBound = guess;  // 猜小了，更新範圍下限
+                } else {
+                    upperBound = guess;  // 猜大了，更新範圍上限
+                }
+
+                // 顯示更新後的範圍
+                showUpdatedRange();
+
+                // 若剩餘次數為 0，顯示遊戲結束
+                if (remainingAttempts === 0) {
+                    showGameResult("遊戲結束！正確答案是 " + secretNumber, "wrong.jpg");
+                }
+            }
+        });
+
+        // 取消按鈕點擊處理
+        cancelBtn.addEventListener("click", function() {
+            guessInput.value = "";  // 清空輸入框
+        });
+    </script>
+
+</body>
+</html>
+
